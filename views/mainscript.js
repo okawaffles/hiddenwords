@@ -1,6 +1,7 @@
 let luid = 0;
 let uname = "username";
 let userwstoken = getRndInteger(0,999999);
+let sendHello = true;
 
 const WS_CONNECT_URL = "ws://localhost:1771";
 const WS = new WebSocket(WS_CONNECT_URL);
@@ -15,8 +16,17 @@ const setLobbyUID = function(id) {
 
 
 WS.addEventListener('open', (event) => {
-    WS.send({'mt':'hello','id':userwstoken});
+    console.log('ws opened.');
 });
 WS.addEventListener('message', (event) => {
-    alert(event.data);
+    console.log(event.data);
+    let dat = JSON.parse(event.data);
+
+    if (dat.mt == "r") {
+        WS.send(JSON.stringify({'mt':'hello','id':userwstoken}));
+    }
+    if (dat.mt == "ack" && dat.id == userwstoken) {
+        sendHello == false;
+        console.log('ready to join lobbies.');
+    }
 })

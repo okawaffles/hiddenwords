@@ -21,9 +21,15 @@ const wss = new ws.WebSocketServer({
     port:1771
 });
 wss.on('connection', function connection(ws) {
+    let user;
     ws.on('message', function message(data) {
-        console.log(data);
+        console.log(JSON.parse(data));
+        let dat = JSON.parse(data);
+        if (dat.mt == "hello") {
+            user = new HWUser(dat.id);
+            ws.send(user.ackHello());
+        }
     });
   
-    ws.send('something');
+    ws.send(JSON.stringify({"mt":"r"}));
 });
